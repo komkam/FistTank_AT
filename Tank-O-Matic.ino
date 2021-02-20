@@ -137,22 +137,22 @@ String now_date;
 String now_time;
 String new_date;
 String new_time;
-String timeon = "1:10:10";
-String timeoff = "2:20:20";
+String timeon = "1:10:10";  //test string
+String timeoff = "2:20:20"; //test string
 String temppv;
-float tempsv;
+String tempsv = "00.00"; //test string
 int setmode;
 float temp;
 //----------------------------------------------
 
 //-------------- State DATA --------------------
-int LPS;
-int HTS1;
-int HTS2;
-int FPS1;
-int FPS2;
-int APS;
-int MANS;
+String LPS;
+String HTS1;
+String HTS2;
+String FPS1;
+String FPS2;
+String APS;
+String MANS;
 //----------------------------------------------
 
 //-------------- Output pin --------------------
@@ -250,6 +250,8 @@ void loop() {
 
   if (setmode == 0) {
     setupA();
+    heat_cont();
+    lamp_cont();
   }
   else if (setmode == 1) {
     setupB();
@@ -260,8 +262,6 @@ void loop() {
   else if (setmode == 3) {
     setupD();
   }
-  temppv = 25.00;
-  tempsv = 26.00;
 }
 //##############################################################################################################
 
@@ -283,9 +283,9 @@ String gettime() {
     new_date = now_date;
   }
   Serial.println();
-  Serial.print(new_date);
-  Serial.print(" ");
   Serial.print(new_time);
+  Serial.print(" ");
+  Serial.print(new_date);
   return new_date, new_time;
 }
 //##############################################################################################################
@@ -302,71 +302,71 @@ void state () {
 
   //Manual Mode
   if (MANT == HIGH) {
-    MANS = 1;
+    MANS = "ON";
     DW(MANL, HIGH);
   }
   else {
-    MANS = 0;
+    MANS = "OFF";
     DW(MANL, LOW);
   }
 
   //Lamp
   if (LPT == HIGH || DR(CH6) == HIGH) {
-    LPS = 1;
+    LPS = "ON";
     DW(LPL, HIGH);
   }
   else {
-    LPS = 0;
+    LPS = "OFF";
     DW(LPL, LOW);
   }
 
   //Heater1
   if (HTT1 == HIGH) {
-    HTS1 = 1;
+    HTS1 = "ON";
     DW(HTL1, HIGH);
   }
   else {
-    HTS1 = 0;
+    HTS1 = "OFF";
     DW(HTL1, LOW);
   }
 
   //Heater2
   if (HTT2 == HIGH) {
-    HTS2 = 1;
+    HTS2 = "ON";
     DW(HTL2, HIGH);
   }
   else {
-    HTS2 = 0;
+    HTS2 = "OFF";
     DW(HTL2, LOW);
   }
 
   //FilterPump1
   if (FPT1 == HIGH) {
-    FPS1 = 1;
+    FPS1 = "ON";
     DW(FPL1, HIGH);
   }
   else {
-    FPS1 = 0;
+    FPS1 = "OFF";
     DW(FPL1, LOW);
   }
 
   //FilterPump2
   if (FPT2 == HIGH) {
-    FPS2 = 1;
+    FPS2 = "ON";
     DW(FPL2, HIGH);
   }
   else {
-    FPS2 = 0;
+    FPS2 = "OFF";
     DW(FPL2, LOW);
   }
 
   //Airpump
   if (APT == HIGH) {
-    APS = 1;
+    APS = "ON";
     DW(APL, HIGH);
   }
   else {
-    APS = 0;
+    APS = "OFF";
     DW(APL, LOW);
   }
 }
@@ -382,24 +382,38 @@ void gettemp() {
   else {
     temppv = temp;
   }
+  Serial.println();
+  Serial.print(temppv);
+  Serial.print(" ");
+  Serial.print("ºC");
 }
 //##############################################################################################################
 
 //################################ Heater Control ##############################################################
-/*void heat_cont() {
-  if (temppv ==tempsv) {
+void heat_cont() {
+  if (temppv == tempsv) {
     DW(CH2, HIGH);
     DW(CH3, HIGH);
     Serial.println();
-    Serial.print("Heater No.1 Auto OFF");
-    Serial.print("Heater No.2 Auto OFF");
+    Serial.println("Heater No.1 Auto ON");
+    Serial.println("Heater No.2 Auto ON");
   }
-  else if (temppv <=tempsv) {
-    DW(CH6, LOW);
+  else if (temppv <= tempsv) {
+    DW(CH2, LOW);
+    DW(CH3, LOW);
     Serial.println();
-    Serial.print("Lamp Auto OFF");
+    Serial.println("Heater No.1 Auto OFF");
+    Serial.println("Heater No.2 Auto OFF");
   }
-  }*/
+  else if (temppv == "ERROR !!!") {
+    DW(CH2, LOW);
+    DW(CH3, LOW);
+    Serial.println();
+    Serial.println("TEMPPURATURE SENSOR ERROR!!!");
+    Serial.println("Heater No.1 Force OFF");
+    Serial.println("Heater No.2 Force OFF");
+  }
+}
 //##############################################################################################################
 
 //################################# Lamp Control ###############################################################
@@ -407,12 +421,18 @@ void lamp_cont() {
   if (new_time == timeon) {
     DW(CH6, HIGH);
     Serial.println();
-    Serial.print("Lamp Auto ON");
+    Serial.println("Lamp Auto ON");
   }
   else if (new_time == timeoff) {
     DW(CH6, LOW);
     Serial.println();
-    Serial.print("Lamp Auto OFF");
+    Serial.println("Lamp Auto OFF");
+  }
+  else if (new_time == "ERROR !!!") {
+    DW(CH6, LOW);
+    Serial.println();
+    Serial.println("TIME MODULE ERROR!!!");
+    Serial.println("LAMP Force OFF");
   }
 }
 //##############################################################################################################
@@ -421,23 +441,31 @@ void lamp_cont() {
 void setup_sec() {
   char key = keypad.getKey();
   if (key == 'A') {
+    Serial.println();
     Serial.println("Display Main Screen");
     lcd.clear();
     setmode = 0;
+    //setupA();
   }
   else if (key == 'B') {
+    Serial.println();
     Serial.println("Setup Tempurature");
     lcd.clear();
+    //setupB();
     setmode = 1;
   }
   else if (key == 'C') {
+    Serial.println();
     Serial.println("Setup Lamp Time");
     lcd.clear();
+    //setupC();
     setmode = 2;
   }
   else if (key == 'D') {
+    Serial.println();
     Serial.println("MANUAL MODE");
     lcd.clear();
+    //setupD();
     setmode = 3;
   }
 }
@@ -478,14 +506,16 @@ void setupB() {
   lcd.setCursor(4, 2);
   lcd.print("PV = ");
   lcd.setCursor(9, 2);
-  lcd.print("           ");
+  lcd.print("         ");
   lcd.setCursor(9, 2);
   lcd.print(temppv);
+  lcd.setCursor(16, 2);
   lcd.print((char)223);
   lcd.print("C");
   lcd.setCursor(4, 3);
   lcd.print("SV = ");
   lcd.print(tempsv);
+  lcd.setCursor(16, 3);
   lcd.print((char)223);
   lcd.print("C");
   // lcd.setCursor();
@@ -517,6 +547,30 @@ void setupC() {
 //################################ Manual Mode Screen ##########################################################
 void setupD() {
   lcd.setCursor(4, 0);
-  lcd.print("MANUAL MODE");
+  lcd.print("MANUAL MODE!");
+  lcd.setCursor(1, 1);
+  lcd.print("HT 1 = ");
+  lcd.print("   ");
+  lcd.print(HTS1);
+  lcd.setCursor(1, 2);
+  lcd.print("HT 2 = ");
+  lcd.print("   ");
+  lcd.print(HTS2);
+  lcd.setCursor(1, 3);
+  lcd.print("LP 1 = ");
+  lcd.print("   ");
+  lcd.print(LPS);
+  lcd.setCursor(12, 1);
+  lcd.print("FP 1 = ");
+  lcd.print("   ");
+  lcd.print(FPS1);
+  lcd.setCursor(12, 2);
+  lcd.print("FP 2 = ");
+  lcd.print("   ");
+  lcd.print(FPS2);
+  lcd.setCursor(12, 3);
+  lcd.print("AP = ");
+  lcd.print("   ");
+  lcd.print(APS);
 }
 //##############################################################################################################
