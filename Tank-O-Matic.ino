@@ -115,7 +115,7 @@ char keys[ROWS][COLS] = {
   {'1', '2', '3', 'A'},
   {'4', '5', '6', 'B'},
   {'7', '8', '9', 'C'},
-  {'*', '0', '#', 'D'}
+  {'X', '0', 'Y', 'D'}
 };
 
 byte rowPins[ROWS] = {37, 35, 33, 31}; // เชื่อมต่อกับ Pin แถวของปุ่มกด
@@ -258,7 +258,7 @@ void loop() {
   else if (setmode == 3) {
     setupD();
   }
-  
+
 }
 //##############################################################################################################
 
@@ -387,47 +387,58 @@ void gettemp() {
 //##############################################################################################################
 
 //################################ Get Data From Keypad ########################################################
-char BufNum[8];
-void  SlideNum(void)
+char bufferval[8];
+void  shiftval(void)
 {
-  BufNum[6]  = BufNum[5];
-  BufNum[5]  = BufNum[4];
-  BufNum[4]  = BufNum[3];
-  BufNum[3]  = BufNum[2];
-  BufNum[2]  = BufNum[1];
-  BufNum[1]  = BufNum[0];
+  bufferval[6]  = bufferval[5];
+  bufferval[5]  = bufferval[4];
+  bufferval[4]  = bufferval[3];
+  bufferval[3]  = bufferval[2];
+  bufferval[2]  = bufferval[1];
+  bufferval[1]  = bufferval[0];
 }
-unsigned long GetNum(int Count,int X,int Y)
-{ char Key,i,N;
-  int Sum; 
+unsigned long getval(int Count, int X, int Y)
+{ char Key, i, N;
+  int Sum;
 
-  lcd.setCursor(X+(Count-1),Y); 
+  lcd.setCursor(X + (Count - 1), Y);
   N = 0;
-  for(i=0;i<Count;i++){BufNum[i] = ' ';}
-  i = 0;
-  while(Key != '#')
-  { Key = NO_KEY;
-    while(Key == NO_KEY){Key = keypad.getKey();}    
-    Beep(); delay(300);
-   if(Key == '*'){for(i=0;i<Count;i++){BufNum[i] = ' ';}N = 0;}                  
-   if((N < Count)&&(Key >= '0')&&(Key <= '9'))
-   { SlideNum();
-     BufNum[0] = Key;
-     N++;
-   }
-   lcd.setCursor(X,Y);
-   for(i=0;i<Count;i++){lcd.print(BufNum[Count-(i+1)]);}
-   lcd.setCursor(X+(Count-1),Y);  
-    
+  for (i = 0; i < Count; i++) {
+    bufferval[i] = ' ';
   }
-Sum = 0;
-for(i=0;i<Count;i++)
- {
-   if(BufNum[Count-(i+1)]==0x20){BufNum[Count-(i+1)] = '0';}
-   Sum = (Sum*10) + (BufNum[Count-(i+1)]-'0');
- }
-lcd.noCursor();
-return(Sum);  
+  i = 0;
+  while (Key != '#')
+  { Key = NO_KEY;
+    while (Key == NO_KEY) {
+      Key = keypad.getKey();
+    }
+    if (Key == '*') {
+      for (i = 0; i < Count; i++) {
+        bufferval[i] = ' ';
+      } N = 0;
+    }
+    if ((N < Count) && (Key >= '0') && (Key <= '9'))
+    { shiftval();
+      bufferval[0] = Key;
+      N++;
+    }
+    lcd.setCursor(X, Y);
+    for (i = 0; i < Count; i++) {
+      lcd.print(bufferval[Count - (i + 1)]);
+    }
+    lcd.setCursor(X + (Count - 1), Y);
+
+  }
+  Sum = 0;
+  for (i = 0; i < Count; i++)
+  {
+    if (bufferval[Count - (i + 1)] == 0x20) {
+      bufferval[Count - (i + 1)] = '0';
+    }
+    Sum = (Sum * 10) + (bufferval[Count - (i + 1)] - '0');
+  }
+  lcd.noCursor();
+  return (Sum);
 }
 //##############################################################################################################
 
