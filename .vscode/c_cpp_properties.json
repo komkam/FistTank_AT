@@ -3,25 +3,27 @@
         {
             "name": "Win32",
             "includePath": [
+                "C:\\Users\\thana\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
+                "C:\\Users\\thana\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.4\\**",
                 "C:\\Program Files (x86)\\Arduino\\tools\\**",
                 "C:\\Users\\thana\\Documents\\Arduino\\libraries\\**",
                 "C:\\Program Files (x86)\\Arduino\\libraries\\**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
-                "${workspaceFolder}/lib/**"
+                "${workspaceFolder}\\lib\\**",
+                "${workspaceFolder}/lib/Keypad"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "USBCON"
+                "USBCON",
+                "ARDUINO=10808"
             ],
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-msvc-x64",
-            "forcedInclude": [
-                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
-            ]
+            "forcedInclude": []
         }
     ],
     "version": 4

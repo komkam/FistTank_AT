@@ -1,4 +1,6 @@
 /*
+  Copyright (c) 2021 KKSiS
+  Code By Thanawit Thanatho
   ######################################################################
   ##                      Pin OUT MEGA2560 R3                         ##
   ######################################################################
@@ -115,7 +117,7 @@ char keys[ROWS][COLS] = {
   {'1', '2', '3', 'A'},
   {'4', '5', '6', 'B'},
   {'7', '8', '9', 'C'},
-  {'X', '0', 'Y', 'D'}
+  {'*', '0', '#', 'D'}
 };
 
 byte rowPins[ROWS] = {37, 35, 33, 31}; // เชื่อมต่อกับ Pin แถวของปุ่มกด
@@ -137,10 +139,13 @@ String now_date;
 String now_time;
 String new_date;
 String new_time;
+char key;
+char val[10];
+int num = 0, k = 0;
 String timeon = "1:10:10";  //test string
 String timeoff = "2:20:20"; //test string
 String temppv;
-String tempsv = "00.00"; //test string
+String tempsv; //test string
 int setmode;
 float temp;
 //----------------------------------------------
@@ -250,8 +255,10 @@ void loop() {
     lamp_cont();
   }
   else if (setmode == 1) {
-    setupB();
-  }
+        setupB();
+        }
+      
+    
   else if (setmode == 2) {
     setupC();
   }
@@ -444,14 +451,14 @@ unsigned long getval(int Count, int X, int Y)
 
 //################################ Heater Control ##############################################################
 void heat_cont() {
-  if (temppv == tempsv) {
+  if (temppv <= tempsv) {
     DW(CH2, HIGH);
     DW(CH3, HIGH);
     Serial.println();
     Serial.println("Heater No.1 Auto ON");
     Serial.println("Heater No.2 Auto ON");
   }
-  else if (temppv <= tempsv) {
+  else if (temppv == tempsv) {
     DW(CH2, LOW);
     DW(CH3, LOW);
     Serial.println();
@@ -571,7 +578,6 @@ void setupB() {
   lcd.setCursor(16, 3);
   lcd.print((char)223);
   lcd.print("C");
-  // lcd.setCursor();
 
 }
 //##############################################################################################################
