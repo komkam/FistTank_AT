@@ -140,8 +140,6 @@ String now_time;
 String new_date;
 String new_time;
 char key;
-char val[10];
-int num = 0, k = 0;
 String timeon = "1:10:10";  //test string
 String timeoff = "2:20:20"; //test string
 String temppv;
@@ -255,10 +253,8 @@ void loop() {
     lamp_cont();
   }
   else if (setmode == 1) {
-        setupB();
-        }
-      
-    
+    setupB();
+  }
   else if (setmode == 2) {
     setupC();
   }
@@ -394,59 +390,7 @@ void gettemp() {
 //##############################################################################################################
 
 //################################ Get Data From Keypad ########################################################
-char bufferval[8];
-void  shiftval(void)
-{
-  bufferval[6]  = bufferval[5];
-  bufferval[5]  = bufferval[4];
-  bufferval[4]  = bufferval[3];
-  bufferval[3]  = bufferval[2];
-  bufferval[2]  = bufferval[1];
-  bufferval[1]  = bufferval[0];
-}
-unsigned long getval(int Count, int X, int Y)
-{ char Key, i, N;
-  int Sum;
 
-  lcd.setCursor(X + (Count - 1), Y);
-  N = 0;
-  for (i = 0; i < Count; i++) {
-    bufferval[i] = ' ';
-  }
-  i = 0;
-  while (Key != '#')
-  { Key = NO_KEY;
-    while (Key == NO_KEY) {
-      Key = keypad.getKey();
-    }
-    if (Key == '*') {
-      for (i = 0; i < Count; i++) {
-        bufferval[i] = ' ';
-      } N = 0;
-    }
-    if ((N < Count) && (Key >= '0') && (Key <= '9'))
-    { shiftval();
-      bufferval[0] = Key;
-      N++;
-    }
-    lcd.setCursor(X, Y);
-    for (i = 0; i < Count; i++) {
-      lcd.print(bufferval[Count - (i + 1)]);
-    }
-    lcd.setCursor(X + (Count - 1), Y);
-
-  }
-  Sum = 0;
-  for (i = 0; i < Count; i++)
-  {
-    if (bufferval[Count - (i + 1)] == 0x20) {
-      bufferval[Count - (i + 1)] = '0';
-    }
-    Sum = (Sum * 10) + (bufferval[Count - (i + 1)] - '0');
-  }
-  lcd.noCursor();
-  return (Sum);
-}
 //##############################################################################################################
 
 //################################ Heater Control ##############################################################
